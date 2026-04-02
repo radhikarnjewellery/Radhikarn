@@ -1,6 +1,7 @@
 [build]
-  command = "cd frontend/artifacts/jewellery-store && npm install && npm run build"
-  publish = "frontend/artifacts/jewellery-store/dist"
+  base = "frontend/artifacts/jewellery-store"
+  command = "npm install && npm run build"
+  publish = "dist/public"
 
 [build.environment]
   NODE_VERSION = "22"
