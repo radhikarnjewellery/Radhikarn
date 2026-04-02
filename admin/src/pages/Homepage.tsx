@@ -201,7 +201,7 @@ export default function Homepage() {
                       <Trash2 size={13} />
                     </button>
                   )}
-                  <input ref={el => fileRefs.current[idx] = el} type="file" accept="image/*" className="hidden"
+                  <input ref={el => { fileRefs.current[idx] = el }} type="file" accept="image/*" className="hidden"
                     onChange={e => e.target.files?.[0] && handleImageUpload(idx, e.target.files[0])} />
                 </div>
 
