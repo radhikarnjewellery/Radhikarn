@@ -1,0 +1,15 @@
+packages:
+  "framer-motion": "For premium smooth page transitions and scroll animations"
+
+images:
+  - path: "artifacts/jewellery-store/public/images/hero-bg.png"
+    description: "Dark, moody, luxury and elegant composition featuring shiny gold jewelry on black velvet or dark marble background, high contrast, studio lighting"
+    aspect_ratio: "16:9"
+  - path: "artifacts/jewellery-store/public/images/about-craft.png"
+    description: "Close up of a master jeweler's hands working on a piece of gold jewelry, dark moody lighting, luxury craftsmanship, sparks, shallow depth of field"
+    aspect_ratio: "16:9"
+
+notes:
+  - "Assuming generated API hooks (useCreateOrder, useGetOrder) are in @workspace/api-client-react"
+  - "Using Wouter for routing without nested <a> tags"
+  - "Dark/Gold theme implemented via custom CSS variables"

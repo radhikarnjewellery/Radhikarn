@@ -1,0 +1,63 @@
+@import "tailwindcss";
+
+@theme {
+  --font-display: "Montserrat", serif;
+  --font-cormorant: "Cormorant Garamond", serif;
+  --color-rk-gold: #d4af37;
+  --color-rk-dark: #050505;
+  --color-rk-glass: rgba(212, 175, 55, 0.05);
+  --backdrop-blur-2xl: blur(40px);
+}
+
+@layer base {
+  body {
+    @apply bg-[#050505] text-[#F5F5F5] font-display antialiased selection:bg-rk-gold selection:text-black;
+    letter-spacing: 0.05em;
+  }
+}
+
+@utility glass-card {
+  backdrop-filter: blur(40px);
+  background-color: rgba(0, 0, 0, 0.6);
+  border: 1px solid rgba(212, 175, 55, 0.1);
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4);
+}
+
+@utility gold-gradient {
+  background-image: linear-gradient(to right, #B8860B, #D4AF37, #8B7500);
+}
+
+@utility gold-gradient-text {
+  background-image: linear-gradient(to top right, #8B7500, #D4AF37, #FFD700);
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+}
+
+.admin-input {
+  @apply w-full bg-black/40 backdrop-blur-xl border border-rk-gold/10 rounded-2xl px-6 py-5 focus:border-rk-gold/50 focus:bg-rk-gold/[0.02] outline-none transition-all duration-500 placeholder:text-[#333] text-sm tracking-widest text-white/80;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.02);
+}
+
+.admin-input:focus {
+  @apply shadow-[0_15px_40px_rgba(0,0,0,0.4),0_0_20px_rgba(212,175,55,0.05)];
+}
+
+.admin-btn-primary {
+  @apply gold-gradient text-black font-black uppercase tracking-widest text-[11px] px-8 py-5 rounded-xl transition-all shadow-[0_15px_30px_rgba(212,175,55,0.15)] active:scale-95 cursor-pointer;
+}
+
+.admin-btn-outline {
+  @apply border border-rk-gold/30 text-rk-gold hover:bg-rk-gold/10 font-bold uppercase tracking-widest text-[10px] px-8 py-5 rounded-xl transition-all active:scale-95 cursor-pointer;
+}
+
+::-webkit-scrollbar {
+  width: 5px;
+}
+::-webkit-scrollbar-track {
+  background: #050505;
+}
+::-webkit-scrollbar-thumb {
+  background: #D4AF37;
+  border-radius: 10px;
+}
