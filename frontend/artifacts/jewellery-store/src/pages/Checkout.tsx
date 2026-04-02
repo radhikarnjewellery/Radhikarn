@@ -422,8 +422,7 @@ export default function Checkout() {
         couponCode: appliedCoupon?.code || null,
         couponDiscount: appliedCoupon?.discount || 0,
         totalAmount: grandTotal,
-        paymentScreenshot: paymentSS,
-        couponCode: appliedCoupon?.code || null
+        paymentScreenshot: paymentSS
       };
 
       const result = await createOrder(orderData);

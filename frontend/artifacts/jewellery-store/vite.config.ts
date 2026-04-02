@@ -36,6 +36,7 @@ export default defineConfig({
         orientation: "portrait",
         scope: basePath,
         start_url: basePath,
+        capture_links: "none",
         icons: [
           {
             src: "images/logo.webp",

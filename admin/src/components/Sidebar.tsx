@@ -15,6 +15,14 @@ interface SidebarProps {
 export default function Sidebar({ onLogout }: SidebarProps) {
   const [location] = useLocation();
   const [isOpen, setIsOpen] = useState(false);
+  const [isDesktop, setIsDesktop] = useState(false);
+
+  useEffect(() => {
+    const check = () => setIsDesktop(window.innerWidth >= 1024);
+    check();
+    window.addEventListener('resize', check);
+    return () => window.removeEventListener('resize', check);
+  }, []);
   const [unseenVisitors, setUnseenVisitors] = useState(0);
 
   useEffect(() => {
@@ -58,7 +66,7 @@ export default function Sidebar({ onLogout }: SidebarProps) {
 
       {/* Main Sidebar */}
       <AnimatePresence>
-        {(isOpen || window.innerWidth >= 1024) && (
+        {(isOpen || isDesktop) && (
           <motion.aside
             initial={{ x: -300 }}
             animate={{ x: 0 }}

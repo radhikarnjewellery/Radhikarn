@@ -56,8 +56,8 @@ export default function Notifications() {
             <div className="w-8 h-[1px] gold-gradient" />
             <span className="text-rk-gold text-[10px] uppercase tracking-[0.5em] font-black">Site Banner</span>
           </div>
-          <h1 className="text-5xl font-display uppercase tracking-[0.1em] text-white font-black mb-3">
-            Notifications <span className="gold-gradient-text italic font-medium lowercase font-cormorant text-[3.5rem] tracking-normal ml-2">Banner</span>
+          <h1 className="text-3xl md:text-5xl font-display uppercase tracking-[0.1em] text-white font-black mb-3">
+            Notifications <span className="gold-gradient-text italic font-medium lowercase font-cormorant text-[2.5rem] md:text-[3.5rem] tracking-normal ml-2">Banner</span>
           </h1>
           <p className="text-[#6A6A6A] text-[10px] uppercase tracking-[0.25em] font-bold">Scrolling announcements shown on the homepage hero.</p>
         </motion.div>
@@ -102,10 +102,10 @@ export default function Notifications() {
         <div className="space-y-3">
           {items.map((item, i) => (
             <motion.div key={item._id} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.04 }}
-              className="glass-card rounded-2xl border-white/5 hover:border-rk-gold/20 transition-all px-6 py-5 flex items-center gap-5">
-              <GripVertical size={16} className="text-white/10 shrink-0" />
+              className="glass-card rounded-2xl border-white/5 hover:border-rk-gold/20 transition-all px-4 md:px-6 py-4 md:py-5 flex items-center gap-3 md:gap-5">
+              <GripVertical size={16} className="text-white/10 shrink-0 hidden sm:block" />
               <div className="flex-1 min-w-0">
-                <p className={`text-sm font-bold truncate ${item.isActive ? 'text-white' : 'text-white/30'}`}>{item.text}</p>
+                <p className={`text-xs md:text-sm font-bold truncate ${item.isActive ? 'text-white' : 'text-white/30'}`}>{item.text}</p>
               </div>
               <button onClick={() => toggleActive(item)}
                 className={`w-11 h-6 rounded-full transition-all relative shrink-0 ${item.isActive ? 'bg-rk-gold' : 'bg-white/10'}`}>
