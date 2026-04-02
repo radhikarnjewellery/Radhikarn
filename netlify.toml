@@ -1,8 +1,7 @@
 [build]
   base = "frontend/artifacts/jewellery-store"
   command = "npm install && npm run build"
-  publish = "dist"
+  publish = "frontend/artifacts/jewellery-store/dist"
 
 [build.environment]
   NODE_VERSION = "22"
-  PNPM_FLAGS = "--no-frozen-lockfile"
