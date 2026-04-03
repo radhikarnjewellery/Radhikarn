@@ -7,10 +7,10 @@ import { motion, AnimatePresence } from "framer-motion";
 import { GoldenBackground } from "@/components/GoldenBackground";
 
 const SORTS = [
-  { label: "Popularity", value: "popular" },
-  { label: "Newest", value: "new" },
-  { label: "Price: Low to High", value: "price_asc" },
-  { label: "Price: High to Low", value: "price_desc" },
+  { label: "Popularity", shortLabel: "Popular", value: "popular" },
+  { label: "Newest", shortLabel: "Newest", value: "new" },
+  { label: "Price: Low to High", shortLabel: "Price ↑", value: "price_asc" },
+  { label: "Price: High to Low", shortLabel: "Price ↓", value: "price_desc" },
 ];
 const ITEMS_PER_PAGE = 12;
 
@@ -157,6 +157,27 @@ export default function Shop() {
     return result;
   }, [category, sort, priceRange, searchQuery, products]);
 
+  // Lock body scroll when mobile filter is open (iOS-safe)
+  useEffect(() => {
+    if (isFilterOpen) {
+      const scrollY = window.scrollY;
+      document.body.style.position = "fixed";
+      document.body.style.top = `-${scrollY}px`;
+      document.body.style.width = "100%";
+    } else {
+      const scrollY = document.body.style.top;
+      document.body.style.position = "";
+      document.body.style.top = "";
+      document.body.style.width = "";
+      if (scrollY) window.scrollTo(0, parseInt(scrollY || "0") * -1);
+    }
+    return () => {
+      document.body.style.position = "";
+      document.body.style.top = "";
+      document.body.style.width = "";
+    };
+  }, [isFilterOpen]);
+
   const totalPages = Math.ceil(filteredProducts.length / ITEMS_PER_PAGE);
   const currentProducts = filteredProducts.slice((page - 1) * ITEMS_PER_PAGE, page * ITEMS_PER_PAGE);
 
@@ -170,25 +191,25 @@ export default function Shop() {
 
         {/* ── SIDEBAR ── truly fixed on desktop, slide-in on mobile */}
         <aside ref={sidebarRef} className={`
-          fixed inset-0 z-50 bg-[#050505]/98 backdrop-blur-3xl overflow-y-auto
-          lg:fixed lg:top-20 lg:left-0 lg:h-[calc(100vh-80px)] lg:overflow-y-auto
+          fixed top-[62px] md:top-[72px] left-0 right-0 bottom-0 z-50 bg-[#050505]/98 backdrop-blur-3xl overflow-y-auto
+          lg:fixed lg:top-20 lg:right-auto lg:h-[calc(100vh-80px)] lg:overflow-y-auto
           lg:w-[280px] xl:w-[300px]
           lg:bg-[#0a0a0a]
           lg:border-r lg:border-[#D4AF37]/10
           lg:translate-x-0 lg:opacity-100
           lg:z-30
           transition-all duration-300
-          ${isFilterOpen ? "translate-x-0 opacity-100" : "-translate-x-full opacity-0 lg:translate-x-0 lg:opacity-100"}
+          ${isFilterOpen ? "translate-x-0 opacity-100 pointer-events-auto" : "-translate-x-full opacity-0 pointer-events-none lg:translate-x-0 lg:opacity-100 lg:pointer-events-auto"}
         `}>
           {/* Gold top accent line */}
           <div className="hidden lg:block h-[2px] w-full bg-gradient-to-r from-transparent via-[#D4AF37]/60 to-transparent" />
 
           <div className="p-6 flex flex-col gap-7">
-            {/* Mobile close */}
-            <div className="flex justify-between items-center lg:hidden">
-              <h2 className="font-display text-4xl tracking-tighter text-[#F5F5F5] font-black italic">Refine</h2>
-              <button onClick={() => setIsFilterOpen(false)} className="text-[#D4AF37] p-2">
-                <X size={32} />
+            {/* Mobile header */}
+            <div className="flex justify-between items-center lg:hidden border-b border-white/5 pb-4 mb-1">
+              <h2 className="font-display text-2xl tracking-tighter text-[#F5F5F5] font-black italic">Refine</h2>
+              <button onClick={() => setIsFilterOpen(false)} className="text-[#D4AF37] p-1.5 rounded-lg bg-white/5 hover:bg-white/10 transition-colors">
+                <X size={20} />
               </button>
             </div>
 
@@ -308,24 +329,81 @@ export default function Shop() {
         {/* ── MAIN CONTENT ── offset by sidebar width on desktop */}
         <div id="gallery-start" className="flex-1 flex flex-col px-4 lg:pl-[296px] xl:pl-[316px] lg:pr-8 pb-16 min-w-0 relative z-10">
 
-          {/* Mobile filter button */}
-          <div className="lg:hidden flex items-center pt-6 pb-4">
-            <button
-              onClick={() => setIsFilterOpen(true)}
-              className="flex items-center gap-3 bg-white/5 border border-white/10 px-6 py-3 uppercase tracking-[0.3em] text-[10px] text-[#F5F5F5] font-black rounded-xl"
-            >
-              <Filter size={13} className="text-[#D4AF37]" /> Filters
-            </button>
+          {/* Mobile inline search */}
+          <div className="lg:hidden mt-4 mb-2">
+            <form onSubmit={handleSearch} className="relative">
+              <Search size={13} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#D4AF37]/50 pointer-events-none" />
+              <input
+                type="text"
+                value={localSearch}
+                onChange={(e) => setLocalSearch(e.target.value)}
+                placeholder="Search jewellery..."
+                className="w-full bg-white/[0.04] border border-white/10 rounded-xl py-3 pl-9 pr-9 text-[#F5F5F5] placeholder:text-[#444] outline-none focus:border-[#D4AF37]/40 transition-all text-[11px] tracking-wider"
+              />
+              {localSearch && (
+                <button type="button" onClick={() => { setLocalSearch(""); setSearchQuery(""); setPage(1); }} className="absolute right-3.5 top-1/2 -translate-y-1/2 text-[#555] hover:text-[#D4AF37] transition-colors">
+                  <X size={13} />
+                </button>
+              )}
+            </form>
           </div>
 
           {/* Control bar */}
-          <div className="sticky top-20 z-40 bg-[#050505]/90 backdrop-blur-xl rounded-2xl border border-white/5 shadow-[0_8px_32px_rgba(0,0,0,0.5)] mb-8 px-6 py-4 flex justify-between items-center gap-4">
-            <div className="flex items-center gap-5">
+          <div className="sticky top-[62px] md:top-20 z-40 bg-[#050505]/90 backdrop-blur-xl rounded-2xl border border-white/5 shadow-[0_8px_32px_rgba(0,0,0,0.5)] mb-8 lg:mt-0 px-4 lg:px-6 py-3 lg:py-4 flex flex-col lg:flex-row lg:justify-between lg:items-center gap-2 lg:gap-4">
+
+            {/* Mobile row 1: Filter + Sort buttons — equal size */}
+            <div className="flex lg:hidden items-stretch gap-3">
+              <button
+                onClick={() => setIsFilterOpen(true)}
+                className="flex items-center justify-center gap-2 flex-1 h-10 bg-white/5 border border-white/10 px-4 uppercase tracking-[0.3em] text-[10px] text-[#F5F5F5] font-black rounded-xl"
+              >
+                <Filter size={12} className="text-[#D4AF37] shrink-0" /> Filters
+              </button>
+              <div ref={sortRef} className="relative flex-1">
+                <button
+                  onClick={() => setIsSortOpen(!isSortOpen)}
+                  className="flex items-center justify-center gap-1.5 w-full h-10 bg-white/5 border border-white/10 px-3 rounded-xl transition-all overflow-hidden"
+                >
+                  <span className="text-[10px] text-[#888] uppercase tracking-[0.2em] font-black truncate min-w-0">
+                    Sort: <span className="text-[#D4AF37]">{SORTS.find(s => s.value === sort)?.shortLabel}</span>
+                  </span>
+                  <ChevronDown size={11} className={`text-[#D4AF37] transition-transform shrink-0 ${isSortOpen ? "rotate-180" : ""}`} />
+                </button>
+                <div className={`absolute top-full right-0 mt-2 w-48 bg-[#080808]/98 backdrop-blur-2xl border border-white/10 rounded-xl overflow-hidden shadow-2xl transition-all z-50 ${isSortOpen ? "opacity-100 visible translate-y-0" : "opacity-0 invisible -translate-y-2"}`}>
+                  {SORTS.map(s => (
+                    <button key={s.value} onClick={() => { setSort(s.value); setPage(1); setIsSortOpen(false); }}
+                      className={`w-full text-left px-5 py-3 text-[9px] uppercase tracking-[0.3em] font-black transition-all border-l-2 ${sort === s.value ? "border-[#D4AF37] text-[#D4AF37] bg-white/[0.03]" : "border-transparent text-[#666] hover:text-[#DDD] hover:bg-white/[0.03]"}`}>
+                      {s.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            {/* Mobile row 2: info text — visible colors */}
+            <div className="flex lg:hidden items-center gap-2 px-1 border-t border-white/5 pt-2">
+              <span className="text-[10px] text-[#888] tracking-[0.3em] uppercase font-bold">
+                {searchQuery
+                  ? <><span className="text-[#666]">Search:</span> <span className="text-[#D4AF37]">"{searchQuery}"</span></>
+                  : category !== "All"
+                    ? <span className="text-[#D4AF37]">{category}</span>
+                    : "All Collections"
+                }
+                {priceRange[1] < 100000 && <span className="text-[#666] ml-1">· up to ₹{priceRange[1].toLocaleString()}</span>}
+              </span>
+              <div className="w-[1px] h-3 bg-white/10 shrink-0" />
+              <span className="text-[#D4AF37] text-[10px] uppercase tracking-[0.3em] font-black shrink-0">
+                {(isLoading || storeLoading) ? <span className="text-[#555]">Loading...</span> : `${filteredProducts.length} Items`}
+              </span>
+            </div>
+
+            {/* Desktop layout */}
+            <div className="hidden lg:flex items-center gap-5">
               <div>
                 <span className="text-[10px] text-[#555] tracking-[0.4em] uppercase font-bold block mb-0.5">
                   {searchQuery ? (
                     <div className="flex items-center gap-2">
-                       Search: <span className="text-[#D4AF37]">"{searchQuery}"</span>
+                      Search: <span className="text-[#D4AF37]">"{searchQuery}"</span>
                     </div>
                   ) : (
                     category !== "All" ? category : "All Collections"
@@ -333,27 +411,21 @@ export default function Shop() {
                 </span>
                 <div className="flex items-center gap-3">
                   <span className="text-[#D4AF37] text-[11px] uppercase tracking-[0.3em] font-black">
-                    {(isLoading || storeLoading) ? (
-                      <span className="text-[#555]">Loading...</span>
-                    ) : (
-                      `${filteredProducts.length} Items Found`
-                    )}
+                    {(isLoading || storeLoading) ? <span className="text-[#555]">Loading...</span> : `${filteredProducts.length} Items Found`}
                   </span>
                   {(priceRange[0] > 0 || priceRange[1] < 100000) && (
                     <>
                       <div className="w-[1px] h-3 bg-white/10" />
                       <span className="text-[9px] text-[#777] uppercase tracking-[0.2em] font-black">
-                        Range: <span className="text-[#D4AF37]/80">₹{priceRange[0].toLocaleString()} - ₹{priceRange[1].toLocaleString()}{priceRange[1] >= 100000 ? "+" : ""}</span>
+                        Range: <span className="text-[#D4AF37]/80">₹{priceRange[0].toLocaleString()} – ₹{priceRange[1].toLocaleString()}{priceRange[1] >= 100000 ? "+" : ""}</span>
                       </span>
                     </>
                   )}
                 </div>
               </div>
+              {totalPages > 1 && <div className="h-8 w-[1px] bg-white/10" />}
               {totalPages > 1 && (
-                <div className="h-8 w-[1px] bg-white/10 hidden sm:block" />
-              )}
-              {totalPages > 1 && (
-                <div className="hidden sm:block">
+                <div>
                   <span className="text-[9px] text-[#555] tracking-[0.3em] uppercase font-bold block mb-0.5">Current Page</span>
                   <span className="text-[#F5F5F5] text-[10px] uppercase tracking-[0.2em] font-black">
                     Page <span className="text-[#D4AF37]">{page}</span> of {totalPages}
@@ -362,7 +434,7 @@ export default function Shop() {
               )}
             </div>
 
-            <div ref={sortRef} className="relative">
+            <div ref={sortRef} className="relative hidden lg:block">
               <button
                 onClick={() => setIsSortOpen(!isSortOpen)}
                 className="flex items-center gap-3 bg-white/[0.02] border border-white/5 hover:border-white/10 px-5 py-2.5 rounded-lg transition-all"

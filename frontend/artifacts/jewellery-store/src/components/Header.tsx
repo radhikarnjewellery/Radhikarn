@@ -1,15 +1,16 @@
 import { useState, useEffect, useRef } from "react";
 import { Link, useLocation } from "wouter";
-import { Search, ShoppingCart, Heart, Menu, X, User as UserIcon, Phone, MapPin, Instagram, Facebook, Twitter, ArrowRight } from "lucide-react";
+import { Search, ShoppingCart, Heart, Menu, X, User as UserIcon, ArrowRight, LogOut } from "lucide-react";
 import { useStore } from "@/context/StoreContext";
 import { motion, AnimatePresence } from "framer-motion";
 
 export function Header() {
   const [location, setLocation] = useLocation();
-  const { cart, wishlist, searchQuery, setSearchQuery, user } = useStore();
+  const { cart, wishlist, searchQuery, setSearchQuery, user, logout } = useStore();
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
   const searchRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -38,6 +39,7 @@ export function Header() {
   useEffect(() => {
     setIsMobileMenuOpen(false);
     setIsSearchOpen(false);
+    setShowLogoutConfirm(false);
   }, [location, setLocation]);
 
   useEffect(() => {
@@ -296,21 +298,38 @@ export function Header() {
                   </Link>
                </div>
 
-               {/* Footer */}
-               <div className="mt-auto pt-4 border-t border-white/5 flex flex-col gap-4 w-full">
-                  <div className="flex justify-between items-center text-white/30 w-full">
-                     <div className="flex items-center gap-2">
-                        <Phone size={11} className="text-[#D4AF37]/50 shrink-0" />
-                        <span className="text-[9px] font-black tracking-widest">+91 98765 43210</span>
+               {/* Footer - removed */}
+               {user && (
+                 <div className="mt-auto pt-4 border-t border-white/5 w-full">
+                   {!showLogoutConfirm ? (
+                     <button
+                       onClick={() => setShowLogoutConfirm(true)}
+                       className="w-full flex items-center justify-center gap-2.5 py-3.5 rounded-xl border border-red-500/20 bg-red-500/5 text-red-400/70 hover:bg-red-500/10 hover:text-red-400 transition-all text-[10px] uppercase tracking-[0.3em] font-black"
+                     >
+                       <LogOut size={14} />
+                       Logout
+                     </button>
+                   ) : (
+                     <div className="flex flex-col gap-2">
+                       <p className="text-center text-[10px] text-white/50 uppercase tracking-[0.3em] font-black pb-1">Confirm logout?</p>
+                       <div className="flex gap-2">
+                         <button
+                           onClick={() => setShowLogoutConfirm(false)}
+                           className="flex-1 py-3 rounded-xl border border-white/10 bg-white/5 text-white/50 text-[10px] uppercase tracking-[0.3em] font-black transition-all hover:bg-white/10"
+                         >
+                           Cancel
+                         </button>
+                         <button
+                           onClick={() => { logout(); setIsMobileMenuOpen(false); setShowLogoutConfirm(false); }}
+                           className="flex-1 py-3 rounded-xl border border-red-500/30 bg-red-500/10 text-red-400 text-[10px] uppercase tracking-[0.3em] font-black transition-all hover:bg-red-500/20"
+                         >
+                           Yes, Logout
+                         </button>
+                       </div>
                      </div>
-                     <div className="flex gap-4 shrink-0">
-                        {[Instagram, Facebook, Twitter].map((Icon, i) => (
-                          <Icon key={i} size={15} className="text-white/20 hover:text-[#D4AF37] transition-all" />
-                        ))}
-                     </div>
-                  </div>
-                  <p className="text-[8px] text-white/10 font-bold tracking-[0.25em] uppercase text-center w-full">Radhikarn Heritage Atelier, New Delhi</p>
-               </div>
+                   )}
+                 </div>
+               )}
             </div>
           </motion.div>
         )}
