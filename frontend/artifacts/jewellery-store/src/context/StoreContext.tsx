@@ -2,7 +2,7 @@ import React, { createContext, useContext, useState, useEffect, useCallback } fr
 import { toast } from "sonner";
 import { ShoppingCart, Heart, Trash2, LogOut, LogIn, User as UserIcon } from "lucide-react";
 
-const API_URL = "http://localhost:5000/api";
+const API_URL = `${import.meta.env.VITE_API_URL}/api`;
 
 export interface Product {
   _id: string;

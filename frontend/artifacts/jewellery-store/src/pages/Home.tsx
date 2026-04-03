@@ -363,7 +363,7 @@ export default function Home() {
                       <div className="w-32 h-32 sm:w-40 sm:h-40 md:w-48 md:h-48 rounded-full shrink-0 glass-card border-[0.5px] border-[#D4AF37]/20 flex items-center justify-center group-hover:border-[#D4AF37]/60 transition-all duration-700 relative overflow-hidden group-hover:-translate-y-6 group-hover:shadow-[0_40px_80px_rgba(212,175,55,0.25)] group-active:scale-95">
                         <div className="absolute inset-0 z-0">
                            <img 
-                            src={cat.image.startsWith('http') ? cat.image : `http://localhost:5000${cat.image}`} 
+                            src={cat.image.startsWith('http') ? cat.image : `${import.meta.env.VITE_API_URL}${cat.image}`} 
                             alt={cat.name} 
                             className="w-full h-full object-cover grayscale-[0.6] group-hover:grayscale-0 group-hover:scale-125 transition-all duration-1000 brightness-[0.4] group-hover:brightness-[0.7]" 
                            />
